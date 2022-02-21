@@ -1,32 +1,27 @@
 const express = require("express");
 const chats = require("./data/data");
-
+const connection = require("./config/conn");
 //Instance of express
 const app = express();
+//To make server understand json data
+app.use(express.json());
 
 //Making app capable of usig .env file
 const dotenv = require("dotenv");
+const userRouter = require("./routers/userroutes");
+
 dotenv.config();
 
 const port = process.env.PORT || 5000;
 
-//Basic Home page
-app.get("/", (req, res) => {
-  res.send("Hello from chat application");
-});
+//Connecting with data abse
+// require("./config/conn")
+connection();
 
-//Sending dummy chats from API
-app.get("/api/chats", (req, res) => {
-  res.send(chats);
-});
+//Using API routers
 
-//What does req do?
-//Finding it out
-app.get("/api/chat/:id", (req, res) => {
-  console.log(req);
-  const singlechat = chats.find((e) => e._id === req.params.id);
-  res.send(singlechat);
-});
+//1->User routers
+app.use("/api/user/",userRouter);
 //Making server listen to port number
 app.listen(port, () => {
   console.log(`Listening to port number: ${port}`);
