@@ -8,7 +8,8 @@ import {
     Button,
   } from "@chakra-ui/react";
   import React, { useImperativeHandle, useState } from "react";
-  
+  import { useToast } from "@chakra-ui/react";
+
   const Signup = () => {
       //States to take care of inputs
     const [name, setname] = useState("");
@@ -17,13 +18,28 @@ import {
     const [confirmpassword, setconfirmpassword] = useState("");
     const [pic, setpic] = useState("");
     const [show, setshow] = useState(false);
+
+    const [loading,setloading]=useState(false);
+    //Creating instance of toast
+    const toast=useToast();
+
     //Function to deal with profile photo upload
     const postdetails=(file)=>{
-  
+           setloading(true);
+           if(file===undefined){
+              toast({
+                title:"Please select an image",
+                status:"warning",
+                duration:5000,
+                isClosable:true,
+                position:"bottom",
+              })
+              return;
+           }
     }
     //Function to submit data
     const SubmitHandler=()=>{
-  
+       
     }
     return (
       <VStack spacing={"5px"}>

@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
@@ -9,7 +11,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique:true,
+      unique: true,
     },
     password: {
       type: String,
@@ -25,6 +27,22 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+//pre save function i.e this function will run before data is saved on database
+userSchema.pre("save", async function (next) {
+  if (!this.isModified) {
+    next();
+  }
+  const salt = await bcrypt.genSalt(10); //Generating a salt
+  //Using this salt to hash the password
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+//Creating a method to  work specifically on schema
+userSchema.methods.matchPassword = async function (passworde) {
+  return await bcrypt.compare(passworde, this.password);
+};
 
 const User = mongoose.model("User", userSchema);
 

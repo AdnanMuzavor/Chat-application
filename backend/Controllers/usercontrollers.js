@@ -26,26 +26,56 @@ const registerUser = asyncHandler(async (req, res) => {
       password,
       pic,
     });
-
+    // const createUser=new User({
+    //     name,
+    //   email,
+    //   password,
+    //   pic,
+    // })
+    // const newUser=await createUser.save();
     //  If user is created return it's data
     if (newUser) {
-      res
-        .status(201)
-        .json({
-          _id: newUser._id,
-          name: newUser.name,
-          email: newUser.email,
-          pic: newUser.pic,
-          token:generatetoken(newUser._id)
-        });
-        //Else throw errorr
+      res.status(201).json({
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        pw: newUser.password,
+        pic: newUser.pic,
+        token: generatetoken(newUser._id),
+      });
+      //Else throw errorr
     } else {
-        res.status(400);
-        throw new Error("Could not create a user")
+      res.status(400);
+      throw new Error("Could not create a user");
     }
   }
 });
-const loginUser=asyncHandler((req,res)=>{
-
-})
-module.exports={registerUser,loginUser};
+//Authenticate user
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("Enter all fields");
+  }
+  const finduser = await User.findOne({ email: email});
+  //user found
+  if (finduser) {
+    //checking if password matches
+    const passwordmatch = await finduser.matchPassword(password);
+ 
+    if (passwordmatch) {
+      
+      res.status(201).json({
+        _id: finduser._id,
+        name: finduser.name,
+        email: finduser.email,
+        pic: finduser.pic,
+        token: generatetoken(finduser._id),
+      });
+      return;
+    }
+  }
+  res.status(400);
+  res.send({ Message: "User not found" });
+});
+module.exports = { registerUser, loginUser };
