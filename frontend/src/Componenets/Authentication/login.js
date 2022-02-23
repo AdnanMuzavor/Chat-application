@@ -8,8 +8,13 @@ import {
   Button,
 } from "@chakra-ui/react";
 import React, { useImperativeHandle, useState } from "react";
-
+import { useToast } from "@chakra-ui/react";
+import axios from "axios";
+import {useHistory} from "react-router-dom"
 const Login = () => {
+  const history=useHistory();
+  //Making instance of toast
+  const toast=useToast();
     //States to take care of inputs
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
@@ -17,12 +22,54 @@ const Login = () => {
 
   const [show, setshow] = useState(false);
   //Function to deal with profile photo upload
-  const postdetails=(file)=>{
 
+  //loading
+  const [loading,setloading]=useState(false);
+  const postdetails=(file)=>{
+     
   }
   //Function to submit data
-  const SubmitHandler=()=>{
-
+  const SubmitHandler=async()=>{
+         try {
+          setloading(true);
+          if(!email || !password){
+            toast({
+             title: "Enter all fields",
+             status: "warning",
+             duration: 5000,
+             isClosable: true,
+             position: "bottom",
+            })
+            setloading(false)
+            return;
+          }
+          const {data}=await axios.post("/api/user/login",{email,password},{
+            headers:{
+              "Content-type":"application/json",
+            }
+          })
+          console.log(data)
+          setloading(false);
+          toast({
+           title: "User logged in",
+           status: "warning",
+           duration: 5000,
+           isClosable: true,
+           position: "bottom",
+          })
+          localStorage.setItem("userInfo",JSON.stringify(data));
+          history.push("/chats")
+         } catch (e) {
+           console.log(e)
+           setloading(false);
+           toast({
+            title: "Error occured",
+            status: "warning",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom",
+           })
+         }
   }
   return (
     <VStack spacing={"5px"}>
@@ -39,6 +86,7 @@ const Login = () => {
         <FormLabel>Email</FormLabel>
         <Input
           type="email"
+          value={email}
           placeholder="Enter your email"
           onChange={(e) => setemail(e.target.value)}
         ></Input>
@@ -50,6 +98,7 @@ const Login = () => {
         <InputGroup>
           <Input
             type={show ? "text" : "password"}
+            value={password}
             placeholder="Enter your password"
             onChange={(e) => setpassword(e.target.value)}
           ></Input>
@@ -106,6 +155,7 @@ const Login = () => {
       width="100%"
       style={{marginTop:15}}
       onClick={()=>SubmitHandler()}
+      isLoading={loading}
       >Login</Button>
     </VStack>
   );
