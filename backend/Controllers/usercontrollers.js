@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const {cookie} = require("express/lib/response");
 const res = require("express/lib/response");
 const generatetoken = require("../config/generatetoken");
 const User = require("../Models/userModel");
@@ -64,18 +65,54 @@ const loginUser = asyncHandler(async (req, res) => {
     const passwordmatch = await finduser.matchPassword(password);
  
     if (passwordmatch) {
+      const token=generatetoken(finduser._id);
+      //Storing token in cookie
+      res.cookie("jwttoken",token)
+      console.log(token)
       
+      if(token){
       res.status(201).json({
         _id: finduser._id,
         name: finduser.name,
         email: finduser.email,
         pic: finduser.pic,
-        token: generatetoken(finduser._id),
+        token:token,
       });
+    }
       return;
     }
   }
   res.status(400);
   res.send({ Message: "User not found" });
 });
-module.exports = { registerUser, loginUser };
+//All users 
+//To search a user we will be sending a query
+//{{chatURL}}/api/user?search=piyush&lastname=agarwa
+const allUsers=asyncHandler(async(req,res)=>{
+    //To understand how to take query
+    //Method -I
+    console.log(req.query)// will print all the quesriues
+    const {search,lastname}=req.query;
+    //But this is not a good soln as sometimes search may be empty
+
+    //$or performas logical (or) operation on array of statements
+    //If anyone is true return true
+    const keyword=req.query.search?{
+      $or:[
+         {name:{$regex: req.query.search,$options:"i"}},
+         {email:{$regex: req.query.search,$options:"i"}}
+      ]
+    }:null
+    console.log(`keyword is: ${keyword}`)
+    //the result will be stored in keyword and we can search fromm it
+    //keyword can be smail if email matched
+    //or it can be name if name matched
+    const users=await User.find(keyword).find({_id:{$ne:req.user._id}})
+    //Means find all users except current loggedin user
+    //redq.user id value is set by middleware
+    res.send(
+      users
+    )
+  
+})
+module.exports = { registerUser, loginUser, allUsers };

@@ -7,10 +7,15 @@ const app = express();
 //To make server understand json data
 app.use(express.json());
 
+//For storing token in cookie
+const cookieparser=require("cookie-parser");
+app.use(cookieparser());
+
 //Making app capable of usig .env file
 const dotenv = require("dotenv");
 const userRouter = require("./routers/userroutes");
 const { errorHandler, notFound } = require("./middleware/errorMiddleware");
+const chatrouter = require("./routers/chatrouters");
 
 dotenv.config();
 
@@ -24,6 +29,7 @@ connection();
 
 //1->User routers
 app.use("/api/user/", userRouter);
+app.use("/api/chat",chatrouter);
 
 //If APIs does'nt work or any error these lines will be executed
 app.use(notFound);
