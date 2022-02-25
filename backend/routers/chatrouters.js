@@ -1,5 +1,5 @@
 const express = require("express");
-const {accesschat} = require("../Controllers/chatcontrollers");
+const {accesschat, fetchchats, creategroupchat} = require("../Controllers/chatcontrollers");
 const { protect } = require("../middleware/authmiddleware");
 const chatrouter = express.Router();
 
@@ -8,9 +8,9 @@ const chatrouter = express.Router();
 //For creating a chat
 chatrouter.route("/").post(protect,accesschat);
 //For fecthing all chats of a user
-chatrouter.route("/").get(protect);
+chatrouter.route("/").get(protect,fetchchats);
 //Router for making a group
-chatrouter.route("/group").post(protect);
+chatrouter.route("/group").post(protect,creategroupchat);
 //Router to rename a group
 chatrouter.route("/rename").put(protect);
 //Router to add member to group
