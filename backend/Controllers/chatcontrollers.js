@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const { populate } = require("../Models/Chatmodel");
+const { populate, find } = require("../Models/Chatmodel");
 const Chat = require("../Models/Chatmodel");
 const User = require("../Models/userModel");
 //SINGLE CHAT RELATED FUNCTIONS
@@ -90,6 +90,8 @@ const fetchchats = asyncHandler(async (req, res) => {
 });
 
 //GROUP CHAT RELATED FUNCTIONS
+
+//Creating a group chat
 const creategroupchat = asyncHandler(async (req, res) => {
   //we'll be sending user list and group name
   //If these fields don't exist we should give an error
@@ -121,4 +123,100 @@ const creategroupchat = asyncHandler(async (req, res) => {
     console.log(e);
   }
 });
-module.exports = { accesschat, fetchchats, creategroupchat };
+
+//Function to  rename a group
+const renamegroup = asyncHandler(async (req, res) => {
+  try {
+    //We''ll be taking new name of group from user
+    //Also we need chat id as it's unique
+    const { chatId, chatName } = req.body;
+
+    const findgroupchatandupdate = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        chatName: chatName,
+      },
+      {
+        new: true,
+      }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+    //If updated chat is undefined mkeans some error
+    if (!findgroupchatandupdate) {
+      throw new Error("Chat not found");
+    } else {
+      res.status(200).json(findgroupchatandupdate);
+    }
+  } catch (e) {
+    console.log(e);
+    res.status(400).send({ Message: "Couldn't update group name" });
+  }
+});
+
+//Function more members in group
+const addgroupmembers = asyncHandler(async (req, res) => {
+  try {
+    //Getting group chat id ans id of new users to be added
+    const { chatId, newUserId } = req.body;
+
+    const updatedgroup = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $push: { users: newUserId },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+    if (updatedgroup) {
+      res.json(updatedgroup);
+    } else {
+      res.status(404);
+      throw new Error("Chat not found");
+    }
+  } catch (e) {
+    console.log(e);
+    res.status(400).send({ Messsage: "Couldn't add members to group" });
+  }
+});
+
+//Remove user from group
+
+const removefromgroup = asyncHandler(async (req, res) => {
+  try {
+    const { chatId, userId } = req.body;
+    const removeUser = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $pull: { users: userId },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+    if (removeUser) {
+      res.status(200);
+      res.json(removeUser);
+      return;
+    } else {
+      res.status(404);
+      throw new Error("Chat not found");
+    }
+  } catch (e) {
+    console.log(e);
+    res.status(404).send({ Message: "Couldn't remove user from group" });
+  }
+});
+module.exports = {
+  accesschat,
+  fetchchats,
+  creategroupchat,
+  renamegroup,
+  addgroupmembers,
+  removefromgroup,
+};

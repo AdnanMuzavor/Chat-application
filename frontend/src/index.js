@@ -5,6 +5,7 @@ import App from "./App";
 // 1. import `ChakraProvider` component
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter } from "react-router-dom";
+import chatProvider from "./Context/ContextProvider";
 // function App({ Component }) {
 //   // 2. Use at the root of your app
 //   return (
@@ -14,12 +15,12 @@ import { BrowserRouter } from "react-router-dom";
 //   )
 // }
 ReactDOM.render(
-  <ChakraProvider>
-    <React.StrictMode>
+  <chatProvider>
+    <ChakraProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </React.StrictMode>
-  </ChakraProvider>,
+    </ChakraProvider>
+  </chatProvider>,
   document.getElementById("root")
 );
