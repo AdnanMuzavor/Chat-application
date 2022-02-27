@@ -17,6 +17,7 @@ const ChatProvider=({children})=>{
     //As we are storing userInfo inside localstorage,getting it from there
     useEffect(()=>{
         const userInfo= JSON.parse(localStorage.getItem("userInfo"));
+        console.log(`userinfo is: ${userInfo}`)
         setuser(userInfo);
         if(!userInfo){
             history.push('/');

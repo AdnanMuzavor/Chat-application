@@ -21,6 +21,9 @@ const Chatpage = () => {
 
   //Entire state is in ChatState named variable so getting it hee
   const { user } = ChatState; //this user is that valeu which is passed as value to providefr
+  useEffect(()=>{
+      console.log(user)
+  },[])
   return (
     <>
       <div style={{ width: "100%" }}>
