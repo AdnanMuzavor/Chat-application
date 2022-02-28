@@ -5,6 +5,9 @@ import App from "./App";
 // 1. import `ChakraProvider` component
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./store";
+
 import chatProvider from "./Context/ContextProvider";
 // function App({ Component }) {
 //   // 2. Use at the root of your app
@@ -16,11 +19,12 @@ import chatProvider from "./Context/ContextProvider";
 // }
 ReactDOM.render(
   <chatProvider>
+  <Provider store={store}>
     <ChakraProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </ChakraProvider>
-  </chatProvider>,
+  </Provider></chatProvider>,
   document.getElementById("root")
 );

@@ -11,7 +11,16 @@ import React, { useImperativeHandle, useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { UserSignup } from "../../Actions/User_signup";
 const Signup = () => {
+  //Getting dispatch
+  const dispatch = useDispatch();
+  //Getting state from redux
+  const User = useSelector((state) => state.User);
+  //Destructing user
+  const { loading: userloading, UserInfo, error } = User;
+
   //To use history to push onto other page
   const history = useHistory();
   //States to take care of inputs
@@ -106,27 +115,41 @@ const Signup = () => {
     }
     //Else sending data to backend
     try {
-      const { data } = await axios.post(
-        "/api/user",
-        { name, email, password, pic },
-        {
-          headers: {
-            "Content-type": "application/json",
-          },
-        }
-      );
-      console.log(data);
-      toast({
-        title: "Registration done.",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
-      //Storing this data in local storage
-      localStorage.setItem("userInfo", JSON.stringify(data));
-      setloading(false);
-      history.push("/chats")
+      //Ussing redux
+      dispatch(UserSignup(name, email, password, pic));
+      if (UserInfo) {
+        toast({
+          title: "Registration done.",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+        history.push("/chats");
+      }
+
+      //Using direct API call
+      // const { data } = await axios.post(
+      //   "/api/user",
+      //   { name, email, password, pic },
+      //   {
+      //     headers: {
+      //       "Content-type": "application/json",
+      //     },
+      //   }
+      // );
+      // console.log(data);
+      // toast({
+      //   title: "Registration done.",
+      //   status: "warning",
+      //   duration: 5000,
+      //   isClosable: true,
+      //   position: "bottom",
+      // });
+      // //Storing this data in local storage
+      // localStorage.setItem("userInfo", JSON.stringify(data));
+      // setloading(false);
+      // history.push("/chats");
     } catch (e) {
       console.log(e);
       toast({
@@ -221,7 +244,7 @@ const Signup = () => {
         width="100%"
         style={{ marginTop: 15 }}
         onClick={() => SubmitHandler()}
-        isLoading={loading}
+        isLoading={userloading}
       >
         Sign up
       </Button>

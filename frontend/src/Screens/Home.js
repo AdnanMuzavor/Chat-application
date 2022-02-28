@@ -10,12 +10,15 @@ const Homepage = () => {
   const history = useHistory();
   useEffect(async() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    console.log("Home page")
     if (userInfo) {
       history.push("/chat");
     }
   }, [history]);
   return (
     <>
+  
+    
       <Container maxW="xl" centerContent>
         <Box
           bg={"#ffff"}

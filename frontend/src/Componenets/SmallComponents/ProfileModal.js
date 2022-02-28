@@ -3,6 +3,7 @@ import { IconButton, useDisclosure ,Modal,ModalOverlay,ModalHeader,ModalCloseBut
 import {ViewIcon} from '@chakra-ui/icons'
 import {ModalFooter} from '@chakra-ui/react'
 const ProfileModal = ({user,children}) => {
+     
     const { isOpen, onOpen, onClose } = useDisclosure()
   return children?<span onClick={onOpen}>{children}</span>:
   (<>
@@ -17,7 +18,7 @@ const ProfileModal = ({user,children}) => {
        <Modal isOpen={isOpen} onClose={onClose}>
          <ModalOverlay />
          <ModalContent>
-           <ModalHeader>Modal Title</ModalHeader>
+           <ModalHeader>User Name</ModalHeader>
            <ModalCloseButton />
            <ModalBody>
              modal here

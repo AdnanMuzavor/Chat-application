@@ -5,6 +5,7 @@ const generatetoken = require("../config/generatetoken");
 const User = require("../Models/userModel");
 
 const registerUser = asyncHandler(async (req, res) => {
+  console.log("Inside function")
   //Destructing things which it'll be taking from body
   const { name, email, password, pic } = req.body;
 
