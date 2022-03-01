@@ -1,40 +1,51 @@
-import React from 'react'
-import { IconButton, useDisclosure ,Modal,ModalOverlay,ModalHeader,ModalCloseButton,ModalBody,ModalConten,Button,ModalContent} from '@chakra-ui/react'
-import {ViewIcon} from '@chakra-ui/icons'
-import {ModalFooter} from '@chakra-ui/react'
-const ProfileModal = ({user,children}) => {
-     
-    const { isOpen, onOpen, onClose } = useDisclosure()
-  return children?<span onClick={onOpen}>{children}</span>:
-  (<>
-      <IconButton
-          d={{base:"flex"}}
-          icon={<ViewIcon/>}
-          onClick={onOpen}
-          >
-      </IconButton>
-       <Button onClick={onOpen}>Open Modal</Button>
+import React from "react";
+import {
+  IconButton,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalConten,
+  Button,
+  ModalContent,
+} from "@chakra-ui/react";
+import { ViewIcon } from "@chakra-ui/icons";
+import { ModalFooter } from "@chakra-ui/react";
+const ProfileModal = ({ pic, name, email, isopen }) => {
+  return (
+    <>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title" id="exampleModalLabel">
+              {name}
+            </h5>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div className="modal-body mx-auto">
+            <img src={pic} className="rounded-circle profile" alt="Avatar" />
+            <h4 className="text-center mt-2 mb-2"> {email}</h4>
+          </div>
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
-       <Modal isOpen={isOpen} onClose={onClose}>
-         <ModalOverlay />
-         <ModalContent>
-           <ModalHeader>User Name</ModalHeader>
-           <ModalCloseButton />
-           <ModalBody>
-             modal here
-           </ModalBody>
- 
-          <ModalFooter>
-             <Button colorScheme='blue' mr={3} onClick={onClose}>
-               Close
-             </Button>
-             <Button variant='ghost'>Secondary Action</Button>
-           </ModalFooter>
-         </ModalContent>
-       </Modal></>
-  )
-        
-  
-}
-
-export default ProfileModal
+export default ProfileModal;

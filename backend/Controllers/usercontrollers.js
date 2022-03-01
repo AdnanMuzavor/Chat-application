@@ -22,12 +22,52 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("User already exists");
   } else {
     //Creating a new user
-    const newUser = await User.create({
-      name,
-      email,
-      password,
-      pic,
-    });
+    if(pic!=""){
+      const newUser = await User.create({
+        name,
+        email,
+        password,
+        pic
+      });
+      if (newUser) {
+        res.status(201).json({
+          _id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+          pw: newUser.password,
+          pic: newUser.pic,
+          token: generatetoken(newUser._id),
+        });
+        //Else throw errorr
+      } else {
+        res.status(400);
+        throw new Error("Could not create a user");
+      }
+    }
+    else{
+      const newUser = await User.create({
+        name,
+        email,
+        password,
+       
+      });
+      if (newUser) {
+        res.status(201).json({
+          _id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+          pw: newUser.password,
+          pic: newUser.pic,
+          token: generatetoken(newUser._id),
+        });
+        //Else throw errorr
+      } else {
+        res.status(400);
+        throw new Error("Could not create a user");
+      }
+
+    }
+ 
     // const createUser=new User({
     //     name,
     //   email,

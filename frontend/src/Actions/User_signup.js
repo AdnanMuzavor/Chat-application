@@ -34,6 +34,6 @@ export const UserSignup = (name, email, password, pic) => async (dispatch) => {
       dispatch({ type: USER_SIGNUP_FAIL, payload: "User Signup Fail" });
     }
   } catch (e) {
-    dispatch({ type: USER_SIGNUP_FAIL, payload: e });
+    dispatch({ type: USER_SIGNUP_FAIL, payload:e.message });
   }
 };

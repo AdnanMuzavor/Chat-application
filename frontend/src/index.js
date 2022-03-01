@@ -18,13 +18,13 @@ import chatProvider from "./Context/ContextProvider";
 //   )
 // }
 ReactDOM.render(
-  <chatProvider>
+  
   <Provider store={store}>
     <ChakraProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </ChakraProvider>
-  </Provider></chatProvider>,
+  </Provider>,
   document.getElementById("root")
 );

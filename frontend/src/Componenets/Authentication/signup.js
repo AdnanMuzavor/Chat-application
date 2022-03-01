@@ -17,9 +17,9 @@ const Signup = () => {
   //Getting dispatch
   const dispatch = useDispatch();
   //Getting state from redux
-  const User = useSelector((state) => state.User);
+  const UserDetails = useSelector((state) => state.UserDetails);
   //Destructing user
-  const { loading: userloading, UserInfo, error } = User;
+  const { loading: userloading, UserInfo, error } = UserDetails;
 
   //To use history to push onto other page
   const history = useHistory();

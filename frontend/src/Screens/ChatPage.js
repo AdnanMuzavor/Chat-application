@@ -7,42 +7,41 @@ import SideDrawer from "../Componenets/ChatComponents/SideDrawer";
 import MyChats from "../Componenets/ChatComponents/MyChats";
 import ChatBox from "../Componenets/ChatComponents/ChatBox";
 import { Box } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 const Chatpage = () => {
-  //To take care of all chat messages
-  // const [chats, setchats] = useState([]);
-  // const fetchchat = async () => {
-  //   const { data } = await axios.get("/api/chats");
-  //   setchats(data);
-  //   console.log(data);
-  // };
-  // useEffect(() => {
-  //   fetchchat();
-  // }, []);
+  //Getting dispatch
+  const dispatch = useDispatch();
+  //Getting user data
+  const UserDetails = useSelector((state) => state.UserDetails);
+  const { loading: userloading, error, UserInfo } = UserDetails;
 
-  //Entire state is in ChatState named variable so getting it hee
-  const { user } = ChatState; //this user is that valeu which is passed as value to providefr
-  useEffect(()=>{
-      console.log(user)
-  },[])
+  const history = useHistory();
+  useEffect(() => {
+    if (!UserInfo) {
+      history.push("/");
+    }
+    console.log(UserInfo)
+  }, []);
   return (
     <>
       <div style={{ width: "100%" }}>
         {/*A side drawer to be rendered only if user is logged in */}
-        {user && <SideDrawer />}
-        <SideDrawer/>
+        {/* { <SideDrawer />} */}
+        <SideDrawer />
         <Box
-        d="flex"
-        justifyContent={"space-between"}
-        w="100%"
-        h="91.5vh"
-        p="10px"
+          d="flex"
+          justifyContent={"space-between"}
+          w="100%"
+          h="91.5vh"
+          p="10px"
         >
           {/* My chats component to be rendered only if user is logged in*/}
-          {user && <MyChats />}
-          <MyChats/>
+          {/* {UserInfo && <MyChats />} */}
+          <MyChats />
           {/* Chat box component to be rendered only if user is logged in*/}
-          {user && <ChatBox />}
-          <ChatBox/>
+          {/* {UserInfo && <ChatBox />} */}
+          <ChatBox />
         </Box>
       </div>
     </>

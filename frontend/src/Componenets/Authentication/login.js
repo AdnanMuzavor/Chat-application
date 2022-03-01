@@ -10,12 +10,20 @@ import {
 import React, { useImperativeHandle, useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
-import {useHistory} from "react-router-dom"
+import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import Userlogin from "../../Actions/User_login";
 const Login = () => {
-  const history=useHistory();
+  //Getting dispatch
+  const dispatch = useDispatch();
+  //Getting user data
+  const UserDetails = useSelector((state) => state.UserDetails);
+  const { loading: userloading, error, UserInfo } = UserDetails;
+
+  const history = useHistory();
   //Making instance of toast
-  const toast=useToast();
-    //States to take care of inputs
+  const toast = useToast();
+  //States to take care of inputs
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
@@ -24,58 +32,74 @@ const Login = () => {
   //Function to deal with profile photo upload
 
   //loading
-  const [loading,setloading]=useState(false);
-  const postdetails=(file)=>{
-     
-  }
+  const [loading, setloading] = useState(false);
+  const postdetails = (file) => {};
   //Function to submit data
-  const SubmitHandler=async()=>{
-         try {
-          setloading(true);
-          if(!email || !password){
-            toast({
-             title: "Enter all fields",
-             status: "warning",
-             duration: 5000,
-             isClosable: true,
-             position: "bottom",
-            })
-            setloading(false)
-            return;
-          }
-          const {data}=await axios.post("/api/user/login",{email,password},{
-            headers:{
-              "Content-type":"application/json",
-            }
-          })
-          console.log(data)
-          setloading(false);
-          toast({
-           title: "User logged in",
-           status: "warning",
-           duration: 5000,
-           isClosable: true,
-           position: "bottom",
-          })
-          localStorage.setItem("userInfo",JSON.stringify(data));
-          history.push("/chats")
-         } catch (e) {
-           console.log(e)
-           setloading(false);
-           toast({
-            title: "Error occured",
-            status: "warning",
-            duration: 5000,
-            isClosable: true,
-            position: "bottom",
-           })
-         }
-  }
+  const SubmitHandler = async () => {
+    try {
+      setloading(true);
+      if (!email || !password) {
+        toast({
+          title: "Enter all fields",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+        setloading(false);
+        return;
+      }
+      // const { data } = await axios.post(
+      //   "/api/user/login",
+      //   { email, password },
+      //   {
+      //     headers: {
+      //       "Content-type": "application/json",
+      //     },
+      //   }
+      // );
+      dispatch(Userlogin(email, password));
+      // console.log(data);
+      setloading(false);
+      if (error) {
+        toast({
+          title: "User login fail",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      } else {
+        toast({
+          title: "User logged in",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
+      // localStorage.setItem("userInfo", JSON.stringify(data));
+      if (UserInfo) {
+        console.log(UserInfo)
+        history.push("/chats");
+      }
+    } catch (e) {
+      console.log(e);
+      setloading(false);
+      toast({
+        title: "Error occured",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+  };
   return (
     <VStack spacing={"5px"}>
-        {/* Any form component can be wrapped inside fromcontrol component */}
+      {/* Any form component can be wrapped inside fromcontrol component */}
       <FormControl id="firstname" isRequired>
-          {/* Form control has two things label and input */}
+        {/* Form control has two things label and input */}
         <FormLabel>Name</FormLabel>
         <Input
           placeholder="Enter your name"
@@ -139,7 +163,6 @@ const Login = () => {
         </InputGroup>
       </FormControl> */}
 
-
       {/* <FormControl id="Pic" isRequired>
         <FormLabel>Upload your picture</FormLabel>
         <Input
@@ -151,12 +174,14 @@ const Login = () => {
         ></Input>
       </FormControl> */}
       <Button
-      colorScheme={'blue'}
-      width="100%"
-      style={{marginTop:15}}
-      onClick={()=>SubmitHandler()}
-      isLoading={loading}
-      >Login</Button>
+        colorScheme={"blue"}
+        width="100%"
+        style={{ marginTop: 15 }}
+        onClick={() => SubmitHandler()}
+        isLoading={userloading}
+      >
+        Login
+      </Button>
     </VStack>
   );
 };

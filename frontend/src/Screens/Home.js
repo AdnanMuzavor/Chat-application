@@ -6,19 +6,25 @@ import Signup from "../Componenets/Authentication/signup";
 import Chatlist from "./Chatlist";
 import Chatpage from "./ChatPage";
 import { useHistory } from "react-router-dom";
+
+import { useDispatch, useSelector } from "react-redux";
+
 const Homepage = () => {
+  //Getting dispatch
+  const dispatch = useDispatch();
+  //Getting user data
+  const UserDetails = useSelector((state) => state.UserDetails);
+  const { loading: userloading, error, UserInfo } = UserDetails;
+
   const history = useHistory();
-  useEffect(async() => {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    console.log("Home page")
-    if (userInfo) {
+  useEffect(async () => {
+    console.log("Home page");
+    if (UserInfo) {
       history.push("/chat");
     }
   }, [history]);
   return (
     <>
-  
-    
       <Container maxW="xl" centerContent>
         <Box
           bg={"#ffff"}

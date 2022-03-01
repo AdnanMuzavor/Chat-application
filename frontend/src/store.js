@@ -7,14 +7,15 @@ const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const initialState = {
   UserDetails: {
-    User: localStorage.getItem("userInfo")
+    UserInfo: localStorage.getItem("userInfo")
       ? JSON.parse(localStorage.getItem("userInfo"))
       : null,
+      
   },
 };
 
 const reducer = combineReducers({
-  User: UserReducers,
+  UserDetails: UserReducers,
 });
 
 const store = createStore(
