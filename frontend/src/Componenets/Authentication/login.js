@@ -81,7 +81,7 @@ const Login = () => {
       // localStorage.setItem("userInfo", JSON.stringify(data));
       if (UserInfo) {
         console.log(UserInfo)
-        history.push("/chats");
+        history.push("/chat");
       }
     } catch (e) {
       console.log(e);

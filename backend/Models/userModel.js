@@ -39,6 +39,17 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+const jwt = require("jsonwebtoken");
+//Generating token
+userSchema.methods.gettoken = async function (userid) {
+  console.log("Generating token");
+  const token = jwt.sign({ userid }, process.env.SECRET_KEY, {
+    expiresIn: "30d",
+  });
+
+  console.log(token);
+  return token;
+};
 //Creating a method to  work specifically on schema
 userSchema.methods.matchPassword = async function (passworde) {
   return await bcrypt.compare(passworde, this.password);

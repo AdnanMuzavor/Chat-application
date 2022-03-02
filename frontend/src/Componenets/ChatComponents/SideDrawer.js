@@ -9,20 +9,30 @@ import {
   Avatar,
   MenuItem,
   MenuDivider,
+  useToast,
 } from "@chakra-ui/react";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProfileModal from "../SmallComponents/ProfileModal";
 // import {ChatState} from "../../Context/ContextProvider";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import Userlogout from "../../Actions/User_logout";
+import axios from "axios";
+import SearchCard from "../SmallComponents/SearchResultCard";
 const SideDrawer = () => {
+  //Uisng toast
+  const toast = useToast();
+  //Getting history var
+  const history = useHistory();
   //Getting dispatch
   const dispatch = useDispatch();
   //Getting user data
   const UserDetails = useSelector((state) => state.UserDetails);
   const { loading: userloading, error, UserInfo } = UserDetails;
+
   //For modal viewing
-  const [isopen,setisopen]=useState(false);
+  const [isopen, setisopen] = useState(false);
   //Getting user state
   // const {user}=ChatState();
   //For searching user
@@ -33,7 +43,59 @@ const SideDrawer = () => {
   const [loading, setloading] = useState(false);
   //On clicking user chat will be loaded
   const [loadingchat, setLoadingchat] = useState();
-  return (
+
+  //Logout handler
+  const LogOutHandler = () => {
+    dispatch(Userlogout());
+    history.push("/");
+  };
+
+  //Search handling functions
+  const SearchHandler = async (e) => {
+    e.preventDefault();
+    alert(`searching for: ${search}`);
+    if (!search) {
+      toast({
+        title: "Please enter something in search",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+        position: "top-left",
+      });
+      return;
+    }
+    try {
+      setloading(true);
+      //sending token
+      const config = {
+        headers: {
+          Authorization: `Bearer ${UserInfo.token}`,
+        },
+      };
+       console.log(config)
+      //Getting search users
+      const { data } = await axios.get(`/api/user?search=${search}`, config);
+      console.log(data);
+      //Setting serach result array
+      setsearchresult(data);
+      setloading(false);
+      console.log(config);
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: "Error occured",
+        description: "Fail to load serach result",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+        position: "top-left",
+      });
+      return;
+    }
+  };
+  return userloading ? (
+    "loading"
+  ) : (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container-fluid">
@@ -76,7 +138,7 @@ const SideDrawer = () => {
                       className="btn"
                       data-bs-toggle="modal"
                       data-bs-target="#exampleModal"
-                      onClick={()=>setisopen(true)}
+                      onClick={() => setisopen(true)}
                     >
                       My profile
                     </button>
@@ -86,7 +148,11 @@ const SideDrawer = () => {
                     <hr className="dropdown-divider" />
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#">
+                    <a
+                      className="dropdown-item"
+                      href="#"
+                      onClick={LogOutHandler}
+                    >
                       Log out
                     </a>
                   </li>
@@ -100,9 +166,12 @@ const SideDrawer = () => {
                 placeholder="Search"
                 aria-label="Search"
                 value={search}
-                onChange={(e)=>setsearch(e.target.value)}
+                onChange={(e) => setsearch(e.target.value)}
               />
-              <button className="btn btn-outline-success" type="submit">
+              <button
+                className="btn btn-outline-success"
+                onClick={SearchHandler}
+              >
                 Search
               </button>
             </form>
@@ -152,12 +221,24 @@ const SideDrawer = () => {
           </div>
         </div> */}
         <ProfileModal
-        name={UserInfo.name}
-        email={UserInfo.email}
-        pic={UserInfo.pic}
-        isopen={isopen}
+          name={UserInfo.name}
+          email={UserInfo.email}
+          pic={UserInfo.pic}
+          isopen={isopen}
         />
       </div>
+      {searchresult.length >= 1 ? (
+        <div className="container">
+          <h5 className="text-center mb-4">Search Results</h5>
+          <div className="row d-flex justify-content-center">
+            {loading
+              ? "LOADING USERS"
+              : searchresult.map((e) => {
+                  return <SearchCard id={e._id} pic={e.pic} name={e.name} />;
+                })}
+          </div>
+        </div>
+      ) : null}
     </>
   );
 };

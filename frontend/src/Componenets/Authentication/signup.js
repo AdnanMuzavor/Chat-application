@@ -125,7 +125,7 @@ const Signup = () => {
           isClosable: true,
           position: "bottom",
         });
-        history.push("/chats");
+        history.push("/chat");
       }
 
       //Using direct API call
@@ -244,7 +244,7 @@ const Signup = () => {
         width="100%"
         style={{ marginTop: 15 }}
         onClick={() => SubmitHandler()}
-        isLoading={userloading}
+        isLoading={loading}
       >
         Sign up
       </Button>

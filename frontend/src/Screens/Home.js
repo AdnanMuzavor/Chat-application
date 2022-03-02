@@ -19,10 +19,11 @@ const Homepage = () => {
   const history = useHistory();
   useEffect(async () => {
     console.log("Home page");
-    if (UserInfo) {
+    console.log(UserInfo)
+    if (UserInfo.name && UserInfo!=={}) {
       history.push("/chat");
     }
-  }, [history]);
+  }, [history, UserInfo]);
   return (
     <>
       <Container maxW="xl" centerContent>
