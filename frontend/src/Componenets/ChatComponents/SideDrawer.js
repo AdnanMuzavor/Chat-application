@@ -20,6 +20,8 @@ import { useHistory } from "react-router-dom";
 import Userlogout from "../../Actions/User_logout";
 import axios from "axios";
 import SearchCard from "../SmallComponents/SearchResultCard";
+import Search_loading from "../Loadingcomponents/search_results_loading";
+import {setCurrChatVal} from "../../Actions/Current_Chat";
 const SideDrawer = () => {
   //Uisng toast
   const toast = useToast();
@@ -37,12 +39,18 @@ const SideDrawer = () => {
   // const {user}=ChatState();
   //For searching user
   const [search, setsearch] = useState("");
+
   //To keep API result returned by /search api
   const [searchresult, setsearchresult] = useState([]);
+
   //Loading while our api gets thr result for us
   const [loading, setloading] = useState(false);
+
   //On clicking user chat will be loaded
   const [loadingchat, setLoadingchat] = useState();
+
+  //For keeping track of chat currently selected chat/newly added chat
+  const [selectedchat, setselectedchat] = useState("");
 
   //Logout handler
   const LogOutHandler = () => {
@@ -53,7 +61,7 @@ const SideDrawer = () => {
   //Search handling functions
   const SearchHandler = async (e) => {
     e.preventDefault();
-    alert(`searching for: ${search}`);
+
     if (!search) {
       toast({
         title: "Please enter something in search",
@@ -72,7 +80,7 @@ const SideDrawer = () => {
           Authorization: `Bearer ${UserInfo.token}`,
         },
       };
-       console.log(config)
+      console.log(config);
       //Getting search users
       const { data } = await axios.get(`/api/user?search=${search}`, config);
       console.log(data);
@@ -91,6 +99,36 @@ const SideDrawer = () => {
         position: "top-left",
       });
       return;
+    }
+  };
+  //Function for creating chat with user
+  const accessChat = async (userid) => {
+    alert(`Accessing chat: ${userid}`);
+    try {
+      setLoadingchat(true);
+      // //Preparing token to be sent to backend
+      // const config = {
+      //   headers: {
+      //     "Content-type": "application/json",
+      //     Authorization: `Bearer ${UserInfo.token}`,
+      //   },
+      // };
+      // //Post request on /api/chat by sending user id
+      // const { data } = await axios.post("/api/chat/", { userid }, config);
+      // console.log(data);
+      // setselectedchat(data);
+      // setLoadingchat(false);
+      dispatch(setCurrChatVal(userid,UserInfo))
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: "Error creating the chat",
+        description: "Fail to load serach result",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+        position: "top-left",
+      });
     }
   };
   return userloading ? (
@@ -227,16 +265,27 @@ const SideDrawer = () => {
           isopen={isopen}
         />
       </div>
-      {searchresult.length >= 1 ? (
+      {search !== "" ? (
         <div className="container">
           <h5 className="text-center mb-4">Search Results</h5>
-          <div className="row d-flex justify-content-center">
-            {loading
-              ? "LOADING USERS"
-              : searchresult.map((e) => {
-                  return <SearchCard id={e._id} pic={e.pic} name={e.name} />;
-                })}
-          </div>
+          {searchresult.length >= 1 ? (
+            <div className="row d-flex justify-content-center">
+              {loading ? (
+                <Search_loading />
+              ) : (
+                searchresult.map((e) => {
+                  return e._id != UserInfo._id ? (
+                    <SearchCard
+                      id={e._id}
+                      pic={e.pic}
+                      name={e.name}
+                      AccessFn={() => accessChat(e._id)}
+                    />
+                  ) : null;
+                })
+              )}
+            </div>
+          ) : null}
         </div>
       ) : null}
     </>

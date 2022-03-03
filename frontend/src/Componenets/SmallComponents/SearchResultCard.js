@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
-const SearchCard = ({id, pic, name }) => {
+const SearchCard = ({id, pic, name,AccessFn }) => {
   return (
     <>
-      <div key={id} className="col-md-2 col-lg-2 col-3 searchcard ">
+      <div key={id} className="col-md-2 col-lg-2 col-3 searchcard " onClick={AccessFn}>
         <img
           src={pic}
           alt="img"

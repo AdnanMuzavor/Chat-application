@@ -78,3 +78,76 @@
   align-items: center;
   flex-direction: row;
 }
+
+/* loading shown when search result loading */
+
+.roll1{
+  width: 8rem;
+  height: 8rem;
+  border: 4px solid rgb(173, 151, 151);
+  border-radius: 5rem;
+  background-color: yellow;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 3s;
+  animation: rotate 2s infinite alternate;
+}
+
+.roll2{
+  width: 6rem;
+  height: 6rem;
+  border: 4px solid rgb(204, 172, 172);
+  border-radius: 3rem;
+  background-color: yellow;
+  border-radius: 4rem;
+  transition: all 5s;
+  animation: rotate 3s infinite alternate;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes rotate {
+  from{
+    transform: rotate(0deg);
+    background-color: aqua;
+  }
+  to{
+    transform: rotate(360deg);
+    background-color: rgb(88, 88, 158);
+  }
+}
+
+/* chat list card styling */
+
+.chatcont{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.2rem;
+  padding: 0.3rem;
+  width: 100%;
+  border: 2px solid black;
+  border-radius: 0.8rem;
+  transition: all 3s;
+  cursor: pointer;
+}
+.chatcont:hover .imgcont img{
+  border: 2px solid blue;
+}
+.chatcont:hover{
+  background-color: aqua;
+}
+.imgcont{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.detailscont{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 0.3rem;
+}

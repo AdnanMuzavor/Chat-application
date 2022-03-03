@@ -38,7 +38,7 @@ const Login = () => {
   const SubmitHandler = async () => {
     try {
       setloading(true);
-      if (!email || !password) {
+      if (!email || !password || !name) {
         toast({
           title: "Enter all fields",
           status: "warning",
@@ -61,7 +61,12 @@ const Login = () => {
       dispatch(Userlogin(email, password));
       // console.log(data);
       setloading(false);
-      if (error) {
+
+      // localStorage.setItem("userInfo", JSON.stringify(data));
+      if (UserInfo.name) {
+        console.log(UserInfo);
+        history.push("/chat");
+      } else if (!UserInfo.name) {
         toast({
           title: "User login fail",
           status: "warning",
@@ -69,19 +74,6 @@ const Login = () => {
           isClosable: true,
           position: "bottom",
         });
-      } else {
-        toast({
-          title: "User logged in",
-          status: "warning",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom",
-        });
-      }
-      // localStorage.setItem("userInfo", JSON.stringify(data));
-      if (UserInfo) {
-        console.log(UserInfo)
-        history.push("/chat");
       }
     } catch (e) {
       console.log(e);
