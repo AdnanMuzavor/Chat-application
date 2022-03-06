@@ -21,13 +21,11 @@ const Chatpage = () => {
     if (!UserInfo) {
       history.push("/");
     }
-    console.log(UserInfo)
+    console.log(UserInfo);
   }, []);
   return (
     <>
-      <div style={{ width: "100%" }}>
-        {/*A side drawer to be rendered only if user is logged in */}
-        {/* { <SideDrawer />} */}
+      {/* <div style={{ width: "100%" }}>
         <SideDrawer />
         <Box
           d="flex"
@@ -36,13 +34,28 @@ const Chatpage = () => {
           h="91.5vh"
           p="10px"
         >
-          {/* My chats component to be rendered only if user is logged in*/}
-          {/* {UserInfo && <MyChats />} */}
           <MyChats />
-          {/* Chat box component to be rendered only if user is logged in*/}
-          {/* {UserInfo && <ChatBox />} */}
+
           <ChatBox />
         </Box>
+      </div> */}
+      <div className="">
+        <div className="row">
+          {/*A side drawer to be rendered only if user is logged in */}
+          <div className="col-md-12 col-lg-12 col-12">
+            <SideDrawer />
+          </div>
+        </div>
+        <div className="row">
+          {/* My chats component to be rendered only if user is logged in*/}
+          <div className="col-md-4 col-lg-4 col-12">
+            <MyChats />
+          </div>
+          {/*A side drawer to be rendered only if user is logged in */}
+          <div className="col-md-8 col-lg-8 col-12">
+            <ChatBox />
+          </div>
+        </div>
       </div>
     </>
   );

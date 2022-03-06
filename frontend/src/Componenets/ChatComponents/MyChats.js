@@ -1,7 +1,9 @@
+import chakraUiCssReset from "@chakra-ui/css-reset";
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {setCurrChatVal} from "../../Actions/Current_Chat";
 import Search_loading from "../Loadingcomponents/search_results_loading";
 import ChatListCard from "../SmallComponents/ChatListCard";
 const MyChats = () => {
@@ -45,6 +47,12 @@ const MyChats = () => {
   useEffect(() => {
     fetchChat();
   }, []);
+
+  //Calling selected Chat function
+  const SelectChat=(userid)=>{
+    alert(userid)
+    dispatch(setCurrChatVal(userid,UserInfo))
+  }
   return loading ? (
     chatloading ? (
       <Search_loading />
@@ -53,9 +61,17 @@ const MyChats = () => {
     )
   ) : (
     <>
-      <div className="container">
+      <div className="container allchats">
         <div className="row">
-          <div className="col-md-4 col-lg-4 col-12">
+          <div className="col-md-12 col-lg-12 col-12 chatsnavbar">
+            <h3>My Chats</h3>
+            <div className="buttonwrap">
+              <button>New Group Chat</button>
+              <i class="fa fa-plus icon" aria-hidden="true"></i>
+              </div>
+            
+            </div>
+          <div className="col-md-12 col-lg-12 col-12 chatlist">
             {ChatList.map((e) => {
               return (
                 <ChatListCard
@@ -63,6 +79,7 @@ const MyChats = () => {
                   name={e.name}
                   email={e.email}
                   pic={e.pic}
+                  SelectChatFn={()=>SelectChat(e._id)}
                 />
               );
             })}

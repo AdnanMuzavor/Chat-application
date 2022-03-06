@@ -6,6 +6,7 @@
 }
 .App {
   display: flex;
+  flex-direction: column;
   height: 100vh;
   background: url("./Images/background.png");
   background-size: cover;
@@ -150,4 +151,119 @@
   align-items: center;
   flex-direction: column;
   padding: 0.3rem;
+}
+/*Navbar at top of my chats*/
+.chatsnavbar{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem;
+  margin: 0.3rem;
+ 
+}
+
+.chatsnavbar .buttonwrap{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.2rem;
+  background-color: rgb(161, 161, 161);
+  border-radius: 0.3rem;
+  transition: all 5s;
+}
+.buttonwrap:hover .icon{
+ color: blue;
+ transform: translate(1,2);
+}
+.buttonwrap button{
+  margin: 0.2rem;
+}
+.buttonwrap i{
+  margin: 0.2rem;
+}
+
+/* css for box showing chat list */
+
+.allchats{
+  height: 36rem ;
+  /* overflow-y: hidden; */
+  /* overflow-y: scroll; */
+  
+
+}
+.allchats .chatlist{
+  padding: 0.6rem;
+  height: 28rem;
+  border-radius: 0.5rem;
+  border: 2px solid black;
+  overflow-y: scroll;
+}
+
+/*Chat box related CSS*/
+.chatmainbox{
+  height: 36rem;
+  border-radius: 0.6rem;
+  border: 2px solid black;
+}
+.messagebox{
+  border-radius: 0.6rem;
+  border:2px solid black;
+  height: 28rem;
+  overflow-y: scroll;
+  border-bottom: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.chattext{
+  display: flex;
+  justify-content: space-between;
+  margin: 0.6rem;
+  padding: 0.1rem;
+}
+.iconwrap{
+  border: 2px solid black;
+  border-radius: 0.4rem;
+  background-color:rgb(161, 161, 161) ;
+  margin-right: 2rem;
+}
+.iconwrap .fa-eye{
+  padding: 0.3rem;
+}
+.textbox{
+border: 2px solid black;
+border-radius: 0.6rem;
+height: 2.5rem;
+border-top: none;
+border-top-left-radius: 0;
+border-top-right-radius: 0;
+background-color:rgb(161, 161, 161) ;
+display: flex;
+justify-content: space-around;
+align-items: center;
+
+}
+.textbox input{
+  width: 80%;
+  height: 2rem;
+  border-radius: 2rem;
+  padding: 0.2rem;
+}
+.textbox .sendbtn{
+  padding: 0.3rem;
+  border: 2px solid black;
+  border-radius: 0.3rem;
+  width: 18%;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.textbox .sendbtn:hover{
+  background-color: grey;
+}
+/*Use to align loading to center*/
+.center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

@@ -18,6 +18,7 @@ export const setCurrChatVal = (userid, UserInfo) => async (dispatch) => {
     console.log(config);
     const { data } = await axios.post("/api/chat/", { userid }, config);
     if (data) {
+      localStorage.setItem("selectedChat",JSON.stringify(data));
       dispatch({ type: SET_CURRENT_CHAT_SUCCESS, payload: data });
     } else {
       dispatch({
