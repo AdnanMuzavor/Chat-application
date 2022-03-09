@@ -40,6 +40,7 @@ const accesschat = asyncHandler(async (req, res) => {
     res.send(ischat[0]);
   } else {
     console.log("chat didn't existed:");
+    const otherUser=await User.findById({_id:userid})
     //creating a new chat
     var chatdata = {
       chatName: "sender",

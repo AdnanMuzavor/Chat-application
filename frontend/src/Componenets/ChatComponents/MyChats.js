@@ -48,11 +48,14 @@ const MyChats = () => {
   //Users who are selected for adding in group
   const [users, setusers] = useState([]);
   const [names, setnames] = useState([]);
-  const AdderUser = (id, name) => {
-    alert(`Adding id: ${id}`);
-    setusers((prev) => [...prev, { _id: id, name: name }]);
+
+  //For selecting users to be added into group
+  const AdderUser = (e) => {
+    alert(`Adding id: ${e._id}`);
+    setusers((prev) => [...prev, e]);
     // setnames((prev) => [...prev, name]);
   };
+
   //This function fetched all chats of logged in user
   const fetchChat = async () => {
     setchatloading(true);
@@ -63,7 +66,7 @@ const MyChats = () => {
           Authorization: `Bearer ${UserInfo.token}`,
         },
       };
-      const { data } = await axios.get("/api/user/", config);
+      const { data } = await axios.get("/api/chat/", config);
       console.log("data of chat");
       console.log(data);
       setChatList(data);
@@ -72,6 +75,7 @@ const MyChats = () => {
       setchatloading(false);
     }
   };
+
   //Calling fetch chat usimg useeffect
   useEffect(() => {
     fetchChat();
@@ -115,6 +119,9 @@ const MyChats = () => {
       console.log(data);
       setsearchloading(false);
       console.log(config);
+      searchresult.map((e) =>
+        console.log(users.find((ele) => ele._id === e._id))
+      );
     } catch (e) {
       console.log(e);
       toast({
@@ -136,6 +143,71 @@ const MyChats = () => {
         return e._id !== id;
       })
     );
+  };
+
+  const SubmitGroupHandler = async () => {
+    if (!groupname) {
+      toast({
+        title: "Enter group name",
+        description: "Can't create group without group name",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+        position: "top-left",
+      });
+      return;
+    }
+    if (!users || users.length <= 1) {
+      toast({
+        title: "Please select users for group",
+        description: "Can't create group without users",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+        position: "top-left",
+      });
+      return;
+    }
+    
+    try {
+      //Sending ids of users in stringified format
+      //Thn we'll be parsing it in backend
+      const config = {
+        headers: {
+          Authorization: `Bearer ${UserInfo.token}`,
+        },
+      };
+      const { data } = await axios.post(
+        "/api/chat/group",
+        { name: groupname, users: JSON.stringify(users.map((e)=>e._id)) },
+        config
+      );
+       console.log(data)
+      //updating chatlist by adding this newly created chat
+      setChatList([data,...ChatList])
+      console.log(ChatList)
+      toast({
+        title: "Group created",
+        description: "New group chat has been created",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+        position: "top-left",
+      });
+      return;
+    } catch (e) {
+
+      toast({
+        title: "Group could not be created",
+        description: "New group chat could not be created",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+        position: "top-left",
+      });
+
+
+    }
   };
   return loading ? (
     chatloading ? (
@@ -179,8 +251,11 @@ const MyChats = () => {
               <div className="selected d-flex justify-content-center">
                 <div className="row">
                   {users.map((e) => {
-                    return users.length>=1?(
-                      <div className="users2 col-md-6 col-lg-6 col-6" key={e._id}>
+                    return users.length >= 1 ? (
+                      <div
+                        className="users2 col-md-6 col-lg-6 col-6"
+                        key={e._id}
+                      >
                         <h6>{e.name.toUpperCase()}</h6>
                         <h1
                           className="closeicon2"
@@ -191,7 +266,9 @@ const MyChats = () => {
                           X
                         </h1>
                       </div>
-                    ):<h1>No users selected</h1>;
+                    ) : (
+                      <h1>No users selected</h1>
+                    );
                   })}
                 </div>
               </div>
@@ -205,13 +282,14 @@ const MyChats = () => {
                         <Search_loading />
                       ) : (
                         searchresult.map((e) => {
-                          return e._id != UserInfo._id ? (
+                          return e._id !== UserInfo._id &&
+                            !users.find((ele) => ele._id === e._id) ? (
                             <>
                               <SearchResultMiniCard
                                 key={e._id}
                                 name={e.name}
                                 pic={e.pic}
-                                Add={() => AdderUser(e._id, e.name)}
+                                Add={() => AdderUser(e)}
                               />
                             </>
                           ) : null;
@@ -222,7 +300,7 @@ const MyChats = () => {
                 </div>
               ) : null}
 
-              <button>Create Chat</button>
+              <button onClick={SubmitGroupHandler}>Create Chat</button>
             </div>
           </div>
         </div>
@@ -249,9 +327,9 @@ const MyChats = () => {
               return (
                 <ChatListCard
                   key={e._id}
-                  name={e.name}
-                  email={e.email}
-                  pic={e.pic}
+                  name={e.users.length===2?e.users[1].name:e.chatName}
+                  email={e.users.length===2?e.users[1].email:""}
+                  pic={e.users.length===2?e.users[1].pic:"https://tse1.mm.bing.net/th?id=OIP.hD_nnTOg6EuVo4Wyur927wHaE8&pid=Api&P=0&w=246&h=164"}
                   SelectChatFn={() => SelectChat(e._id)}
                 />
               );
