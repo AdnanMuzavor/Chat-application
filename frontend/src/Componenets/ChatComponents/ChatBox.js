@@ -23,7 +23,7 @@ const ChatBox = () => {
           Authorization: `Bearer ${UserInfo.token}`,
         },
       };
-      const { data } = await axios.get("/api/user/", config);
+      const { data } = await axios.get("/api/chat/", config);
       console.log("data of chat")
       console.log(data);
     } catch (e) {}
@@ -37,7 +37,7 @@ const ChatBox = () => {
       <div className={`container chatmainbox ${chatloading?"center":""}`}>
        {chatloading?<Search_loading/>:<div className="row chatwrap">
         <div className="chattext">
-          <h2>{CurrChat?CurrChat.users[1].name:"Sender's name"}</h2>
+          <h2>{CurrChat?!CurrChat.isGroupChat?CurrChat.users[1].name:CurrChat.chatName:"Sender's name"}</h2>
           <div className="iconwrap">
           <i class="fa fa-eye" aria-hidden="true"></i>
             </div>

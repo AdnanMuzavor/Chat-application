@@ -31,7 +31,7 @@ const MyChats = () => {
   const [chatloading, setchatloading] = useState(false);
 
   //For handling modal
-  const [modal, setmodal] = useState(true);
+  const [modal, setmodal] = useState(false);
 
   //State for setting group name
   const [groupname, setgroupname] = useState("");
@@ -73,6 +73,7 @@ const MyChats = () => {
       setchatloading(false);
     } catch (e) {
       setchatloading(false);
+      console.log(e);
     }
   };
 
@@ -82,9 +83,10 @@ const MyChats = () => {
   }, []);
 
   //Calling selected Chat function
-  const SelectChat = (userid) => {
-    alert(userid);
-    dispatch(setCurrChatVal(userid, UserInfo));
+  const SelectChat = (userid, isgroup, chatid) => {
+    // alert(isgroup)
+    // alert(userid);
+    dispatch(setCurrChatVal(userid, UserInfo, isgroup, chatid));
   };
 
   //Search handling functions
@@ -125,7 +127,7 @@ const MyChats = () => {
     } catch (e) {
       console.log(e);
       toast({
-        title: "Error occured",
+        title: "Error occured(search)",
         description: "Fail to load serach result",
         status: "info",
         duration: 5000,
@@ -168,7 +170,7 @@ const MyChats = () => {
       });
       return;
     }
-    
+
     try {
       //Sending ids of users in stringified format
       //Thn we'll be parsing it in backend
@@ -179,13 +181,13 @@ const MyChats = () => {
       };
       const { data } = await axios.post(
         "/api/chat/group",
-        { name: groupname, users: JSON.stringify(users.map((e)=>e._id)) },
+        { name: groupname, users: JSON.stringify(users.map((e) => e._id)) },
         config
       );
-       console.log(data)
+      console.log(data);
       //updating chatlist by adding this newly created chat
-      setChatList([data,...ChatList])
-      console.log(ChatList)
+      setChatList([data, ...ChatList]);
+      console.log(ChatList);
       toast({
         title: "Group created",
         description: "New group chat has been created",
@@ -196,7 +198,6 @@ const MyChats = () => {
       });
       return;
     } catch (e) {
-
       toast({
         title: "Group could not be created",
         description: "New group chat could not be created",
@@ -205,8 +206,6 @@ const MyChats = () => {
         isClosable: true,
         position: "top-left",
       });
-
-
     }
   };
   return loading ? (
@@ -323,16 +322,24 @@ const MyChats = () => {
             </div>
           </div>
           <div className="col-md-12 col-lg-12 col-12 chatlist">
-            {ChatList.map((e) => {
-              return (
+            {ChatList.map((e, i) => {
+              return i >= 2 ? (
                 <ChatListCard
                   key={e._id}
-                  name={e.users.length===2?e.users[1].name:e.chatName}
-                  email={e.users.length===2?e.users[1].email:""}
-                  pic={e.users.length===2?e.users[1].pic:"https://tse1.mm.bing.net/th?id=OIP.hD_nnTOg6EuVo4Wyur927wHaE8&pid=Api&P=0&w=246&h=164"}
-                  SelectChatFn={() => SelectChat(e._id)}
+                  name={e.users.length === 2 ? e.users[1].name : e.chatName}
+                  email={e.users.length === 2 ? e.users[1].email : "group chat"}
+                  pic={
+                    e.users.length === 2
+                      ? e.users[1].pic
+                      : "https://tse1.mm.bing.net/th?id=OIP.hD_nnTOg6EuVo4Wyur927wHaE8&pid=Api&P=0&w=246&h=164"
+                  }
+                  // SelectChatFn={() => SelectChat(e.users[1]._id)}
+
+                  SelectChatFn={() =>
+                    SelectChat(e.users[1]._id, e.isGroupChat, e._id)
+                  }
                 />
-              );
+              ) : null;
             })}
           </div>
         </div>

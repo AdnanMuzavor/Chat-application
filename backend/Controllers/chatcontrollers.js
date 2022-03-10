@@ -62,6 +62,63 @@ const accesschat = asyncHandler(async (req, res) => {
     }
   }
 });
+//Access groupchat
+const accessgroupchat = asyncHandler(async (req, res) => {
+  console.log("get group chat")
+  //User will send user-if with whomk he wants to create a chat
+  const { chatid } = req.body;
+  if (!chatid) {
+    res.status(400);
+    console.log("Chat id not sent");
+    return;
+  }
+
+  //If chat with this user already exists, return;
+
+  //With help of and query we are finding if both
+  //i.e curr user id and user id of user with whom we want to have new chat is present(both are present)
+  var ischat = await Chat.find({
+    isGroupChat: true,
+    _id:chatid,
+  
+  })
+    .populate("users", "-password")
+    .populate("latestMessage"); //means populate/replace user id with entire user info except password
+  console.log(ischat);
+  //populating sender field in message
+  ischat = await User.populate(ischat, {
+    path: "latestMessage.sender", //as we have already populated latestMessage with all message details, we can get sender from there
+    select: "name pic email", //taking only these three details of sender
+  });
+
+  console.log(ischat);
+  if (ischat.length > 0) {
+    console.log("chat existed:");
+    res.send(ischat[0]);
+  } else {
+    console.log("chat didn't existed:");
+    const otherUser=await User.findById({_id:userid})
+    //creating a new chat
+    var chatdata = {
+      chatName: "sender",
+      isGroupChat: false,
+      users: [req.user._id, userid],
+      //  groupAdmin:req.user._id,  cancelled as it's a personal chat,not group
+    };
+    try {
+      //creatin g new chat
+      const newchat = await Chat.create(chatdata);
+      //Finding that chat and populating user's field i.e filling ids wuith user details
+      const fullchat = await Chat.findOne({ _id: newchat._id }).populate(
+        "users",
+        "-password"
+      );
+      res.status(200).send(fullchat);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+});
 
 //Function to fetch chats(chat established by user/or/by sender with user)
 const fetchchats = asyncHandler(async (req, res) => {
@@ -220,4 +277,5 @@ module.exports = {
   renamegroup,
   addgroupmembers,
   removefromgroup,
+  accessgroupchat
 };
