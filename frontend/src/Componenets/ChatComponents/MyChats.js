@@ -323,7 +323,7 @@ const MyChats = () => {
           </div>
           <div className="col-md-12 col-lg-12 col-12 chatlist">
             {ChatList.map((e, i) => {
-              return i >= 2 ? (
+              return i >= 0 ? (
                 <ChatListCard
                   key={e._id}
                   name={e.users.length === 2 ? e.users[1].name : e.chatName}
