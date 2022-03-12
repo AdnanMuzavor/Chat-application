@@ -5,20 +5,20 @@ import {
   RENAME_GROUP_CHAT_SUCCESS,
 } from "../Constants/ChatConstants";
 
-export const RenameGroup = async(UserInfo, chatId, chatName,data) => async (dispatch) => {
+export const RenameGroup =(UserInfo, chatId, chatName) => async (dispatch) => {
+  alert("Inside")
   dispatch({ type: RENAME_GROUP_CHAT_REQUEST });
   try {
-    // const config = {
-    //     headers: {
-    //         "Content-type": "application/json",  
-    //       Authorization: `Bearer ${UserInfo.token}`,
-    //     },
-    //   };
-    // const { data } = await axios.put(
-    //   "/api/chat/rename",
-    //   { chatId, chatName },
-    //   config
-    // );
+    const config = {
+      headers: {
+        Authorization: `Bearer ${UserInfo.token}`,
+      },
+    };
+    const { data } = await axios.put(
+      "/api/chat/rename",
+      { chatId, chatName },
+      config
+    );
     console.log(data)
     if (data) {
       dispatch({ type: RENAME_GROUP_CHAT_SUCCESS, payload: data });

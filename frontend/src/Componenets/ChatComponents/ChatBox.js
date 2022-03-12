@@ -3,9 +3,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddnewUserToGrp } from "../../Actions/Add_New_User";
-import {RemoveUserFmGrp} from "../../Actions/Remove_User_from_group";
+import { LeaveGroup } from "../../Actions/Current_Chat";
+import { RemoveUserFmGrp } from "../../Actions/Remove_User_from_group";
 import { RenameGroup } from "../../Actions/Update_Grp_Chat_name";
 import Search_loading from "../Loadingcomponents/search_results_loading";
+import ProfileModal from "../SmallComponents/ProfileModal";
 import SearchResultMiniCard from "../SmallComponents/SearchResultMiniCard";
 const ChatBox = () => {
   const toast = useToast();
@@ -109,51 +111,48 @@ const ChatBox = () => {
   const UpdateName = async (e) => {
     e.preventDefault();
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${UserInfo.token}`,
-      },
-    };
     const chatId = CurrChat._id;
     const chatName = newgrpname;
 
-    const { data } = await axios.put(
-      "/api/chat/rename",
-      { chatId, chatName },
-      config
-    );
-    console.log(data);
-    dispatch(RenameGroup(UserInfo, chatId, chatName, data));
+    dispatch(RenameGroup(UserInfo, chatId, chatName));
+
+    setnewgrpname("");
   };
 
   //Add new user into group
   const AddnewUser = async (newUserId) => {
-  
     const chatId = CurrChat._id;
-    
-    dispatch(AddnewUserToGrp(UserInfo,newUserId,chatId));
-  };
-//groupremove
 
+    dispatch(AddnewUserToGrp(UserInfo, newUserId, chatId));
+  };
+ 
+//Function to remove user from group
   const RemoveUser = async (userId) => {
-  
+    // CurrChat.filter((e)=>e._id===userId)
     const chatId = CurrChat._id;
     const config = {
       headers: {
         Authorization: `Bearer ${UserInfo.token}`,
       },
     };
-    
+
     const { data } = await axios.put(
       "/api/chat/groupremove",
       { chatId, userId },
       config
     );
     console.log(data);
+
+    //If admin is leaving group
     dispatch(RemoveUserFmGrp(data));
+    if (userId === UserInfo._id) {
+      dispatch(LeaveGroup());
+    }
   };
   //Remove user from group handler
-  return chatloading?<Search_loading/>:(
+  return chatloading ? (
+    <Search_loading />
+  ) : CurrChat.chatName ? (
     <>
       {/* Modal for cretaing group chat */}
       <div className="row center">
@@ -162,7 +161,9 @@ const ChatBox = () => {
             modal ? "vis" : "nonvis"
           }`}
         >
-          <div className="closeicon">X</div>
+          <div className="closeicon" onClick={(e) => setmodal(!modal)}>
+            X
+          </div>
           <div className="modalbody">
             {/*Displaying chat name based of chat type */}
             <h1>
@@ -170,123 +171,162 @@ const ChatBox = () => {
                 ? CurrChat.chatName
                 : CurrChat.users[1].name}
             </h1>
-            <div className="inputs">
-              {/* Searching users directly with help of API */}
+            {/* Searching users directly with help of API */}
 
-              {/* List of users selected */}
-              <div className="selected d-flex justify-content-center">
-                <div className="row">
-                  {/*If group chat displaying users */}
-                  {CurrChat.isGroupChat
-                    ? CurrChat.users.map((e) => {
-                        return (
-                          <>
-                            <div
-                              className="users2 col-md-6 col-lg-6 col-6"
-                              key={e._id}
+            {/* List of users selected */}
+            <div className="selected d-flex justify-content-center">
+              <div className="row">
+                {/*If group chat displaying users */}
+                {CurrChat.isGroupChat
+                  ? CurrChat.users.map((e) => {
+                      return e._id !== UserInfo._id ? (
+                        <>
+                          <div
+                            className="users2 col-md-6 col-lg-6 col-6"
+                            key={e._id}
+                          >
+                            <h6>{e.name.toUpperCase()}</h6>
+                            <h1
+                              className="closeicon2"
+                              onClick={(et) => {
+                                RemoveUser(e._id);
+                              }}
                             >
-                              <h6>{e.name.toUpperCase()}</h6>
-                              <h1
-                                className="closeicon2"
-                                onClick={(et) => {
-                                RemoveUser(e._id)
-                                }}
-                              >
-                                X
-                              </h1>
-                            </div>
-                          </>
-                        );
-                      })
-                    : null}
-                </div>
+                              X
+                            </h1>
+                          </div>
+                        </>
+                      ) : null;
+                    })
+                  : null}
               </div>
-              {/*Update group chat section */}
-              {/* Taking new group chat  name */}
-              <div className="newnamewrap">
-                <input
-                  type="text"
-                  placeholder="Enter group  name"
-                  className="groupname"
-                  value={newgrpname}
-                  onChange={(e) => setnewgrpname(e.target.value)}
-                />
-                <button onClick={UpdateName}>update</button>
-              </div>
-              {/* Searching users directly with help of API */}
-              <input
-                type="text"
-                placeholder="Enter Users"
-                className="users"
-                onChange={(e) => {
-                  setsearch(e.target.value);
-                  SearchHandler(e, e.target.value);
-                }}
-              />
             </div>
-            {/* Showing search result so that admin can select users */}
-            {search !== "" ? (
-              <div className="container">
-                <h5 className="text-center mb-4">Search Results</h5>
-                {searchresult.length >= 1 ? (
-                  <div className="row d-flex justify-content-center">
-                    {searchloading ? (
-                      <Search_loading />
-                    ) : (
-                      searchresult.map((e) => {
-                        return e._id !== UserInfo._id &&
-                          !CurrChat.users.find((ele) => ele._id === e._id) ? (
-                          <>
-                            <SearchResultMiniCard
-                              key={e._id}
-                              name={e.name}
-                              pic={e.pic}
-                              Add={() => AddnewUser(e._id)}
-                            />
-                          </>
-                        ) : null;
-                      })
-                    )}
+
+            {CurrChat.isGroupChat && CurrChat.groupAdmin===UserInfo._id? (
+              <>
+                <div className="inputs">
+                  {/*Update group chat section */}
+                  {/* Taking new group chat  name */}
+                  <div className="newnamewrap">
+                    <input
+                      type="text"
+                      placeholder="Enter group  name"
+                      className="groupname"
+                      value={newgrpname}
+                      onChange={(e) => setnewgrpname(e.target.value)}
+                    />
+                    <button onClick={UpdateName}>update</button>
+                  </div>
+                  {/* Searching users directly with help of API */}
+                  <input
+                    type="text"
+                    placeholder="Enter Users"
+                    className="users"
+                    onChange={(e) => {
+                      setsearch(e.target.value);
+                      SearchHandler(e, e.target.value);
+                    }}
+                  />
+                </div>
+                {search !== "" ? (
+                  <div className="container">
+                    <h5 className="text-center mb-4">Search Results</h5>
+                    {searchresult.length >= 1 ? (
+                      <div className="row d-flex justify-content-center">
+                        {searchloading ? (
+                          <Search_loading />
+                        ) : (
+                          searchresult.map((e) => {
+                            return e._id !== UserInfo._id &&
+                              !CurrChat.users.find(
+                                (ele) => ele._id === e._id
+                              ) ? (
+                              <>
+                                <SearchResultMiniCard
+                                  key={e._id}
+                                  name={e.name}
+                                  pic={e.pic}
+                                  Add={() => AddnewUser(e._id)}
+                                />
+                              </>
+                            ) : null;
+                          })
+                        )}
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
-              </div>
-            ) : null}
+
+                <button
+                  className="exit "
+                  onClick={() => RemoveUser(UserInfo._id)}
+                >
+                  Exit Group
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="name">
+                  <div className="modal-body mx-auto">
+                    <img
+                      src={CurrChat.users[1].pic}
+                      className="rounded-circle profile"
+                      alt="Avatar"
+                    />
+                    <h4 className="text-center mt-2 mb-2">
+                      {" "}
+                      {CurrChat.users[1].email}
+                    </h4>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
+
+      {/* The main chat box */}
       <div className={`container chatmainbox ${chatloading ? "center" : ""}`}>
         {chatloading ? (
           <Search_loading />
         ) : (
           <div className="row chatwrap">
-            <div className="chattext">
-              <h2>
-                {CurrChat
-                  ? !CurrChat.isGroupChat
-                    ? CurrChat.users[1].name
-                    : CurrChat.chatName
-                  : "Sender's name"}
-              </h2>
-              <div className="iconwrap" onClick={() => setmodal(!modal)}>
-                <i class="fa fa-eye" aria-hidden="true"></i>
-              </div>
-            </div>
-            <div className="col-md-12 col-lg-12 col-12 ">
-              <div className="messagebox"></div>
-              <div className="textbox">
-                <input
-                  type="text"
-                  name="message"
-                  onChange={(e) => setmessage(e.target.value)}
-                  placeholder="Enter Your Message"
-                ></input>
-                <button className="sendbtn">send</button>
-              </div>
-            </div>
+            {CurrChat.chatName ? (
+              <>
+                <div className="chattext">
+                  <h2>
+                    {CurrChat
+                      ? !CurrChat.isGroupChat
+                        ? CurrChat.users[1].name
+                        : CurrChat.chatName
+                      : "Sender's name"}
+                  </h2>
+                  <div className="iconwrap" onClick={() => setmodal(!modal)}>
+                    <i class="fa fa-eye" aria-hidden="true"></i>
+                  </div>
+                </div>
+                <div className="col-md-12 col-lg-12 col-12 ">
+                  <div className="messagebox"></div>
+                  <div className="textbox">
+                    <input
+                      type="text"
+                      name="message"
+                      onChange={(e) => setmessage(e.target.value)}
+                      placeholder="Enter Your Message"
+                    ></input>
+                    <button className="sendbtn">send</button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <h1>Select chat from group chats</h1>
+            )}
           </div>
         )}
       </div>
     </>
+  ) : (
+    <h1>No chat is being selected</h1>
   );
 };
 

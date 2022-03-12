@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
-const ChatListCard = ({key,name,email,pic,SelectChatFn}) => {
+const ChatListCard = ({key,name,email,pic,SelectChatFn,isselected}) => {
   return (
     <>
-      <div className="container chatcont" onClick={SelectChatFn}>
+      <div className={`container chatcont ${isselected?"selected":""}`} onClick={SelectChatFn}>
         <div className="imgcont">
           <img
             src={pic}

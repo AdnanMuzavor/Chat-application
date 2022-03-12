@@ -354,24 +354,22 @@
   border-radius: 0.2rem;
   width: 10rem;
 }
-.users2{
+.users2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
- 
 }
-.users2 h6{
+.users2 h6 {
   background-color: palegoldenrod;
   padding: 0.1rem;
   width: 3rem;
   height: 1rem;
   font-size: 0.8rem;
-   margin: 0.1rem;
+  margin: 0.1rem;
   border-radius: 0.2rem;
-  
 }
-.closeicon2{
+.closeicon2 {
   padding: 0.1rem;
   background-color: blueviolet;
   height: 1rem;
@@ -380,13 +378,28 @@
   justify-content: center;
   align-items: center;
   border-radius: 0.2rem;
-  width:1.2rem;
+  width: 1.2rem;
 }
 
 /*CSS for group modal*/
-.newnamewrap{
+.newnamewrap {
   display: flex;
   justify-content: center;
-  align-items:center;
+  align-items: center;
   flex-direction: row;
+}
+
+/*CSS for exit button*/
+.exit {
+  padding: 0.5rem;
+  background-color: red;
+  color: #ffff;
+  border-radius: 0.6rem;
+  border: 2px solid #fff;
+}
+
+/* CSS for selected chat */
+
+.selected {
+  background-color: aqua;
 }

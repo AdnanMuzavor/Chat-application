@@ -1,3 +1,5 @@
+import {USER_LEAVE_GROUP} from "../Constants/UserConstants";
+
 const {
   SET_CURRENT_CHAT_REQUEST,
   SET_CURRENT_CHAT_SUCCESS,
@@ -64,6 +66,8 @@ export const ChatReducers = (
       };
     case REMOVE_USER_GROUP_CHAT_FAIL:
       return { ...state, chatloading: false, error: action.payload };
+    case USER_LEAVE_GROUP:
+      return {chatloading:false,CurrChat:{}}  
     // case SET_SELECTED_CHAT_REQUEST:
     //   return { ...state, selectedchatload: true };
     // case SET_SELECTED_CHAT_SUCCESS:
