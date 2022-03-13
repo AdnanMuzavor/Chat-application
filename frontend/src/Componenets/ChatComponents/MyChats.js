@@ -76,10 +76,12 @@ const MyChats = () => {
       console.log(e);
     }
   };
-
+ //To set index of user from users array to display name
+  const [index,setindex]=useState(1);
   //Calling fetch chat usimg useeffect
   useEffect(() => {
     fetchChat();
+  
   }, [CurrChat]);
  //Saving current chat
   const [selectedchat,setselectedchat]=useState("");

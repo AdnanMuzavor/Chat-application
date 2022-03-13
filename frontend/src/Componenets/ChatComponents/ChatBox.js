@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddnewUserToGrp } from "../../Actions/Add_New_User";
 import { LeaveGroup } from "../../Actions/Current_Chat";
+import {GetMessages} from "../../Actions/Get_Messages";
 import { RemoveUserFmGrp } from "../../Actions/Remove_User_from_group";
 import { RenameGroup } from "../../Actions/Update_Grp_Chat_name";
 import Search_loading from "../Loadingcomponents/search_results_loading";
@@ -44,6 +45,8 @@ const ChatBox = () => {
   //Calling fetch chat usimg useeffect
   useEffect(() => {
     fetchChat();
+    //Fetching messages of chat as soon as chat loads
+    dispatch(GetMessages(UserInfo,CurrChat._id))
   }, []);
 
   //For toggling model
@@ -125,8 +128,8 @@ const ChatBox = () => {
 
     dispatch(AddnewUserToGrp(UserInfo, newUserId, chatId));
   };
- 
-//Function to remove user from group
+
+  //Function to remove user from group
   const RemoveUser = async (userId) => {
     // CurrChat.filter((e)=>e._id===userId)
     const chatId = CurrChat._id;
@@ -149,6 +152,15 @@ const ChatBox = () => {
       dispatch(LeaveGroup());
     }
   };
+
+
+
+
+
+  //REDUX PART FOR HANDLING MESSAGES
+   const MessageDetails=useSelector((state)=>state.MessageDetails);
+   const {messageloading,Messages,error:messageerror}=MessageDetails;
+
   //Remove user from group handler
   return chatloading ? (
     <Search_loading />
@@ -202,7 +214,7 @@ const ChatBox = () => {
               </div>
             </div>
 
-            {CurrChat.isGroupChat && CurrChat.groupAdmin===UserInfo._id? (
+            {CurrChat.isGroupChat ? (
               <>
                 <div className="inputs">
                   {/*Update group chat section */}

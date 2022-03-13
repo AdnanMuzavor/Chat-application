@@ -16,6 +16,7 @@ const dotenv = require("dotenv");
 const userRouter = require("./routers/userroutes");
 const { errorHandler, notFound } = require("./middleware/errorMiddleware");
 const chatrouter = require("./routers/chatrouters");
+const messagerouter = require("./routers/messagerouters");
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ connection();
 //1->User routers
 app.use("/api/user/", userRouter);
 app.use("/api/chat",chatrouter);
-
+app.use("/api/message",messagerouter)
 //If APIs does'nt work or any error these lines will be executed
 app.use(notFound);
 app.use(errorHandler);

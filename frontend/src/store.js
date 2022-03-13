@@ -2,6 +2,7 @@ import { createStore, compose, applyMiddleware, combineReducers } from "redux";
 
 import thunk from "redux-thunk";
 import { ChatReducers } from "./Reducers/ChatReducers";
+import {MessageReducer} from "./Reducers/MessageReducers";
 import { UserReducers } from "./Reducers/UserReducers";
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -22,6 +23,7 @@ const initialState = {
 const reducer = combineReducers({
   UserDetails: UserReducers,
   ChatDetails: ChatReducers,
+  MessageDetails:MessageReducer,
 });
 
 const store = createStore(
