@@ -51,7 +51,6 @@ const MyChats = () => {
 
   //For selecting users to be added into group
   const AdderUser = (e) => {
-    
     setusers((prev) => [...prev, e]);
     // setnames((prev) => [...prev, name]);
   };
@@ -76,19 +75,18 @@ const MyChats = () => {
       console.log(e);
     }
   };
- //To set index of user from users array to display name
-  const [index,setindex]=useState(1);
+  //To set index of user from users array to display name
+  const [index, setindex] = useState(1);
   //Calling fetch chat usimg useeffect
   useEffect(() => {
     fetchChat();
-  
   }, [CurrChat]);
- //Saving current chat
-  const [selectedchat,setselectedchat]=useState("");
+  //Saving current chat
+  const [selectedchat, setselectedchat] = useState("");
 
   //Calling selected Chat function
   const SelectChat = (userid, isgroup, chatid) => {
-    setselectedchat(chatid)
+    setselectedchat(chatid);
     // alert(isgroup)
     // alert(userid);
     dispatch(setCurrChatVal(userid, UserInfo, isgroup, chatid));
@@ -201,9 +199,9 @@ const MyChats = () => {
         isClosable: true,
         position: "top-left",
       });
-      setmodal(!modal)
-      setgroupname("")
-      setsearch("")
+      setmodal(!modal);
+      setgroupname("");
+      setsearch("");
       return;
     } catch (e) {
       toast({
@@ -331,7 +329,7 @@ const MyChats = () => {
           </div>
           <div className="col-md-12 col-lg-12 col-12 chatlist">
             {ChatList.map((e, i) => {
-              return i >= 0 && e.users.find((e)=>e._id===UserInfo._id)? (
+              return i >= 0 && e.users.find((e) => e._id === UserInfo._id) ? (
                 <ChatListCard
                   key={e._id}
                   name={e.users.length === 2 ? e.users[1].name : e.chatName}
@@ -346,7 +344,7 @@ const MyChats = () => {
                   SelectChatFn={() =>
                     SelectChat(e.users[1]._id, e.isGroupChat, e._id)
                   }
-                  isselected={selectedchat===e._id?true:false}
+                  isselected={selectedchat === e._id ? true : false}
                 />
               ) : null;
             })}

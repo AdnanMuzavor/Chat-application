@@ -4,8 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddnewUserToGrp } from "../../Actions/Add_New_User";
 import { LeaveGroup } from "../../Actions/Current_Chat";
-import {GetMessages} from "../../Actions/Get_Messages";
+import { GetMessages } from "../../Actions/Get_Messages";
 import { RemoveUserFmGrp } from "../../Actions/Remove_User_from_group";
+import { SendMessage } from "../../Actions/Send_Message";
 import { RenameGroup } from "../../Actions/Update_Grp_Chat_name";
 import Search_loading from "../Loadingcomponents/search_results_loading";
 import ProfileModal from "../SmallComponents/ProfileModal";
@@ -19,9 +20,6 @@ const ChatBox = () => {
   //Getting state of user
   const UserDetails = useSelector((state) => state.UserDetails);
   const { loading: userloading, UserInfo, error: usererror } = UserDetails;
-
-  //Current message which user types
-  const [message, setmessage] = useState("");
 
   //Getting state of chat
   const ChatDetails = useSelector((state) => state.ChatDetails);
@@ -46,8 +44,11 @@ const ChatBox = () => {
   useEffect(() => {
     fetchChat();
     //Fetching messages of chat as soon as chat loads
-    dispatch(GetMessages(UserInfo,CurrChat._id))
-  }, []);
+    dispatch(GetMessages(UserInfo, CurrChat._id));
+    //To scroll to chat botto  of current chat
+    var box = document.getElementById("message");
+    box.scrollTop = box.scrollHeight;
+  }, [CurrChat]);
 
   //For toggling model
   const [modal, setmodal] = useState(false);
@@ -153,14 +154,33 @@ const ChatBox = () => {
     }
   };
 
-
-
-
-
   //REDUX PART FOR HANDLING MESSAGES
-   const MessageDetails=useSelector((state)=>state.MessageDetails);
-   const {messageloading,Messages,error:messageerror}=MessageDetails;
+  const MessageDetails = useSelector((state) => state.MessageDetails);
+  const {
+    messageloading,
+    sendmsgload,
+    message,
+    Messages,
+    error: messageerror,
+  } = MessageDetails;
 
+  //Current message which user types
+  const [content, setcontent] = useState("");
+
+  //Send message handler to send message/call API
+  const SendMessageHandler = (e) => {
+    e.preventDefault();
+    dispatch(SendMessage(UserInfo, content, CurrChat._id));
+    setcontent("");
+    //Fetching messages of chat as soon as chat loads
+    setTimeout(() => {
+      dispatch(GetMessages(UserInfo, CurrChat._id));
+    }, 2000);
+    setTimeout(() => {
+      var box = document.getElementById("message");
+      box.scrollTop = box.scrollHeight;
+    }, 3000);
+  };
   //Remove user from group handler
   return chatloading ? (
     <Search_loading />
@@ -299,7 +319,7 @@ const ChatBox = () => {
 
       {/* The main chat box */}
       <div className={`container chatmainbox ${chatloading ? "center" : ""}`}>
-        {chatloading ? (
+        {chatloading && sendmsgload ? (
           <Search_loading />
         ) : (
           <div className="row chatwrap">
@@ -318,15 +338,41 @@ const ChatBox = () => {
                   </div>
                 </div>
                 <div className="col-md-12 col-lg-12 col-12 ">
-                  <div className="messagebox"></div>
+                  <div className="messagebox" id="message">
+                    {Messages.map((e) => {
+                      return e.sender._id === UserInfo._id ? (
+                        <>
+                          <div className="right mt-1">
+                            <p>{e.content}</p>
+                           
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="left mt-1">
+                            <img
+                              src={e.sender.pic}
+                              className="rounded-circle avatar"
+                              style={{ width: "150px" }}
+                              alt="Avatar"
+                            />
+                            <p>{e.content}</p>
+                          </div>
+                        </>
+                      );
+                    })}
+                  </div>
                   <div className="textbox">
                     <input
                       type="text"
                       name="message"
-                      onChange={(e) => setmessage(e.target.value)}
+                      value={content}
+                      onChange={(e) => setcontent(e.target.value)}
                       placeholder="Enter Your Message"
                     ></input>
-                    <button className="sendbtn">send</button>
+                    <button className="sendbtn" onClick={SendMessageHandler}>
+                      send
+                    </button>
                   </div>
                 </div>
               </>

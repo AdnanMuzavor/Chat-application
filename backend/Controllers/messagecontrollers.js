@@ -38,8 +38,8 @@ const SendMessage = asyncHandler(async (req, res) => {
       { latestMessage: message },
       { new: true }
     );
-
-    res.json(message);
+   console.log(message)
+    res.send(message);
   } catch (e) {
     res.status(400);
     throw new Error(e.message);
