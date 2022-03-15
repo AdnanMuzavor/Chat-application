@@ -1,4 +1,4 @@
-import {USER_LEAVE_GROUP} from "../Constants/UserConstants";
+import {USER_LEAVE_GROUP, USER_LOGIN_SUCCESS, USER_LOGOUT_SUCCESS, USER_LOGOUT_SUCCESS_CHAT} from "../Constants/UserConstants";
 
 const {
   SET_CURRENT_CHAT_REQUEST,
@@ -68,6 +68,10 @@ export const ChatReducers = (
       return { ...state, chatloading: false, error: action.payload };
     case USER_LEAVE_GROUP:
       return {chatloading:false,CurrChat:{}}  
+    case USER_LOGOUT_SUCCESS_CHAT:
+      return {chatloading:false,CurrChat:{},SelectedChat:{},error:""}  
+    case USER_LOGOUT_SUCCESS:
+        return {chatloading:false,CurrChat:{},SelectedChat:{},error:""}   
     // case SET_SELECTED_CHAT_REQUEST:
     //   return { ...state, selectedchatload: true };
     // case SET_SELECTED_CHAT_SUCCESS:

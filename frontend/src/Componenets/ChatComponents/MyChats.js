@@ -80,6 +80,13 @@ const MyChats = () => {
   //Calling fetch chat usimg useeffect
   useEffect(() => {
     fetchChat();
+    // console.log(CurrChat.users[0]._id)
+    // console.log(UserInfo._id)
+    // if (CurrChat.users[0]._id == UserInfo._id) {
+    //   setindex(1);
+    // } else {
+    //   setindex(0);
+    // }
   }, [CurrChat]);
   //Saving current chat
   const [selectedchat, setselectedchat] = useState("");
@@ -332,17 +339,35 @@ const MyChats = () => {
               return i >= 0 && e.users.find((e) => e._id === UserInfo._id) ? (
                 <ChatListCard
                   key={e._id}
-                  name={e.users.length === 2 ? e.users[1].name : e.chatName}
-                  email={e.users.length === 2 ? e.users[1].email : "group chat"}
+                  name={
+                    e.users.length === 2
+                      ? e.users[1]._id != UserInfo._id
+                        ? e.users[1].name
+                        : e.users[0].name
+                      : e.chatName
+                  }
+                  email={ e.users.length === 2
+                    ? e.users[1]._id != UserInfo._id
+                      ? e.users[1].email
+                      : e.users[0].email
+                    : "Group Chat"}
                   pic={
                     e.users.length === 2
+                      ? e.users[1]._id != UserInfo._id
                       ? e.users[1].pic
+                      : e.users[0].pic
                       : "https://tse1.mm.bing.net/th?id=OIP.hD_nnTOg6EuVo4Wyur927wHaE8&pid=Api&P=0&w=246&h=164"
                   }
                   // SelectChatFn={() => SelectChat(e.users[1]._id)}
 
                   SelectChatFn={() =>
-                    SelectChat(e.users[1]._id, e.isGroupChat, e._id)
+                    SelectChat(
+                      e.users[1]._id !== UserInfo._id
+                        ? e.users[1]._id
+                        : e.users[0]._id,
+                      e.isGroupChat,
+                      e._id
+                    )
                   }
                   isselected={selectedchat === e._id ? true : false}
                 />

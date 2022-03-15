@@ -42,7 +42,7 @@ const ChatBox = () => {
   };
   //Calling fetch chat usimg useeffect
   useEffect(() => {
-    fetchChat();
+    
     //Fetching messages of chat as soon as chat loads
     dispatch(GetMessages(UserInfo, CurrChat._id));
     //To scroll to chat botto  of current chat
@@ -201,7 +201,9 @@ const ChatBox = () => {
             <h1>
               {CurrChat.isGroupChat
                 ? CurrChat.chatName
-                : CurrChat.users[1].name}
+                : CurrChat.users[1]._id != UserInfo._id
+                ? CurrChat.users[1].name
+                : CurrChat.users[0].name}
             </h1>
             {/* Searching users directly with help of API */}
 
@@ -301,13 +303,17 @@ const ChatBox = () => {
                 <div className="name">
                   <div className="modal-body mx-auto">
                     <img
-                      src={CurrChat.users[1].pic}
+                      src={CurrChat.users[1]._id != UserInfo._id
+                        ? CurrChat.users[1].pic
+                        : CurrChat.users[0].pic}
                       className="rounded-circle profile"
                       alt="Avatar"
                     />
                     <h4 className="text-center mt-2 mb-2">
                       {" "}
-                      {CurrChat.users[1].email}
+                      {CurrChat.users[1]._id != UserInfo._id
+                      ? CurrChat.users[1].email
+                      : CurrChat.users[0].email}
                     </h4>
                   </div>
                 </div>
@@ -327,11 +333,12 @@ const ChatBox = () => {
               <>
                 <div className="chattext">
                   <h2>
-                    {CurrChat
-                      ? !CurrChat.isGroupChat
+                    {!CurrChat.isGroupChat
+                        ? CurrChat.users[1]._id != UserInfo._id
                         ? CurrChat.users[1].name
+                        : CurrChat.users[0].name
                         : CurrChat.chatName
-                      : "Sender's name"}
+                     }
                   </h2>
                   <div className="iconwrap" onClick={() => setmodal(!modal)}>
                     <i class="fa fa-eye" aria-hidden="true"></i>

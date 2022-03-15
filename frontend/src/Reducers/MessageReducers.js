@@ -7,6 +7,7 @@ import {
   SEND_MESSAGE_REQUEST,
   SEND_MESSAGE_SUCCESS,
 } from "../Constants/MessagesConstants";
+import {USER_LOGIN_SUCCESS, USER_LOGOUT_SUCCESS, USER_LOGOUT_SUCCESS_MESSAGE} from "../Constants/UserConstants";
 
 export const MessageReducer = (
   state = { messageloading: false,sendmsgload:false, Messages: [], message: {}, error: "" },
@@ -25,6 +26,10 @@ export const MessageReducer = (
       return { ...state, sendmsgload: false, message: action.payload };
     case SEND_MESSAGE_FAIL:
       return { ...state, sendmsgload: false, error: action.payload };
+    case USER_LOGOUT_SUCCESS_MESSAGE:
+      return {messageloading:false,sendmsgload:false,Messages:[],message:{}} 
+    case USER_LOGOUT_SUCCESS:
+        return {messageloading:false,sendmsgload:false,Messages:[],message:{}}   
     default:
       return state;
   }
